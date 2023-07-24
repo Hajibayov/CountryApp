@@ -25,7 +25,10 @@ const renderCountry = function (data, className = "") {
 </article>
 `;
   countriesContainer.insertAdjacentHTML("beforeend", html);
-  countriesContainer.style.opacity = 1;
+};
+
+const renderErr = function (msg) {
+  countriesContainer.insertAdjacentText("beforeend", msg);
 };
 
 // function getCountryAndNeighbour(country){
@@ -88,10 +91,16 @@ const getCountryData = function (country) {
   //Country 1
   countriesContainer.innerHTML = "";
   fetch(`https://restcountries.com/v3.1/name/${country}`)
-    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
+
+      if (!response.ok) {
+        throw new Error(`Country not found ${response.status}`);
+      }
+      return response.json();
+    })
     .then((data) => {
       renderCountry(data[0]);
-
       const neighbours = data[0].borders;
       console.log(neighbours);
       if (!neighbours) return;
@@ -104,10 +113,18 @@ const getCountryData = function (country) {
             renderCountry(data[0], "neighbour");
           });
       });
+    })
+    .catch((err) => {
+      console.log(`${err} 💥💥💥`),
+        renderErr(`Something went wrong 💥💥💥. ${err.message}. Try again!`);
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
     });
 };
 
 btn.addEventListener("click", function () {
-  const input = document.getElementById("text").value;
+  let input = document.getElementById("text").value;
   getCountryData(input);
+  input = document.getElementById("text").value = "";
 });
