@@ -1,5 +1,5 @@
 "use strict";
-const btn = document.getElementsByClassName("btn-country");
+const btn = document.querySelector(".btn-country");
 const countriesContainer = document.querySelector(".countries");
 
 const renderCard = function (data) {
@@ -58,4 +58,12 @@ const whereAmI = function (lat, lng) {
       countriesContainer.style.opacity = 1;
     });
 };
-whereAmI(-33.933, 18.474);
+
+btn.addEventListener("click", function () {
+  countriesContainer.innerHTML = "";
+  let inpLat = document.querySelector(".lat").value;
+  let inpLng = document.querySelector(".lng").value;
+  whereAmI(inpLat, inpLng);
+  inpLat = document.querySelector(".lat").value = "";
+  inpLng = document.querySelector(".lng").value = "";
+});

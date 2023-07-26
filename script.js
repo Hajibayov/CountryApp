@@ -165,3 +165,5 @@ btn.addEventListener("click", function () {
   getCountryData(input);
   input = document.getElementById("text").value = "";
 });
+
+console.log('Test start')
