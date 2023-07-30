@@ -29,6 +29,7 @@ const renderERR = function (msg) {
 };
 
 const whereAmI = function (lat, lng) {
+  console.log(lat, lng);
   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json&auth=288623767679445758933x9293
     `)
     .then((response) => {
@@ -38,18 +39,23 @@ const whereAmI = function (lat, lng) {
       return response.json();
     })
     .then((data) => {
-      console.log(data.country);
-      return fetch(`https://restcountries.com/v3.1/name/${data.country}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Country not found");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log(data);
-          renderCard(data[0]);
-        });
+      console.log(data);
+      if (data.country)
+        return fetch(`https://restcountries.com/v3.1/name/${data.country}`);
+      else if (data.osmtags)
+        return fetch(
+          `https://restcountries.com/v3.1/name/${data.osmtags.is_in_country}`
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Country not found");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log(data);
+            renderCard(data[0]);
+          });
     })
     .catch((err) => {
       renderERR(err.message);
@@ -67,3 +73,17 @@ btn.addEventListener("click", function () {
   inpLat = document.querySelector(".lat").value = "";
   inpLng = document.querySelector(".lng").value = "";
 });
+
+const getPosition = function () {
+  return new Promise((resolve, reject) => {
+    // navigator.geolocation.getCurrentPosition(
+    //   (position) => resolve(position),
+    //   (err) => reject(err)
+    // );
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+getPosition().then((data) =>
+  whereAmI(data.coords.latitude, data.coords.longitude)
+);
