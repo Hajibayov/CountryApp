@@ -1,6 +1,7 @@
 "use strict";
 const btn = document.querySelector(".btn-country");
 const countriesContainer = document.querySelector(".countries");
+const images = document.querySelector(".images");
 
 const renderCard = function (data) {
   const html = `
@@ -22,10 +23,12 @@ const renderCard = function (data) {
 </article>
   `;
   countriesContainer.insertAdjacentHTML("beforeend", html);
+  countriesContainer.style.opacity = 1;
 };
 
 const renderERR = function (msg) {
   countriesContainer.insertAdjacentText("beforeend", msg);
+  countriesContainer.style.opacity = 1;
 };
 
 const whereAmI = function (lat, lng) {
